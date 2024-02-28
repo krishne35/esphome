@@ -1,0 +1,93 @@
+esphome:
+  name: "kbms"
+  friendly_name: "kbms"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+mqtt:
+  broker: !secret mqtt
+  username: koushik
+  password: Applez35
+  topic_prefix: kbms 
+  birth_message:
+    topic: kbms/status
+    payload: online
+  will_message:
+    topic: kbms/status
+    payload: offline
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+#api:
+#  encryption:
+#    key: "AaqRA7ulx1D4WECg4YRP0dU+xU+/dtk2Wk4wAKtxSDA="
+
+#deep_sleep:
+#  id: deep_sleep_1
+#  run_duration: 20s
+#  sleep_duration: 10min
+#  wakeup_pin: 14
+
+
+ota:
+  password: "7e9ed60819356c32e7e12a911ec6fd3e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  manual_ip:
+    static_ip: 10.0.1.3
+    gateway: 10.0.0.1
+    subnet: 255.255.0.0
+  power_save_mode: high
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Kbms Fallback Hotspot"
+    password: "VlFoMO00XpsN"
+captive_portal:
+
+sensor:
+  - platform: dht
+    model: DHT22
+    pin: 26
+    temperature:
+      name: "Ko Bedroom Temperature"
+    humidity:
+      name: "Ko Bedroom Humidity"
+    update_interval: 5s
+  - platform: wifi_signal
+    name: kbms_rssi
+#  - platform: adc
+#    pin: 34
+#    attenuation: auto
+#    name: "kbms_voltage"
+#    id: esp32_1_vbatt
+#    update_interval: 10s
+#    filters:
+#      - multiply: 1.26
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 14
+      mode: INPUT_PULLUP
+    name: "kob motion"
+    device_class: motion
+
+  - platform: gpio
+    pin:
+      number: 27
+      inverted: true
+      mode: INPUT_PULLUP
+    name: "kob light detect"
+    device_class: light
+switch:
+  - platform: gpio
+    pin: 13
+    name: "MOTION DETECTION"
+    icon: "mdi:motion" 
+    restore_mode: ALWAYS_ON
