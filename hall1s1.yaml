@@ -1,0 +1,146 @@
+esphome:
+  name: hall1s1
+  friendly_name: hall1s1
+
+esp8266:
+  board: esp01_1m
+substitutions:
+  prefix: hall1s1
+  ip: 10.0.1.5
+  S1: S1
+  S2: S2
+  S3: S3
+  S4: s4
+  R1: r1
+  R2: r2
+  R3: r3
+  R4: r4
+
+mqtt:
+  broker: !secret mqtt
+  username: koushik
+  password: Applez35
+
+  topic_prefix: $prefix
+  birth_message:
+    topic: $prefix/status
+    payload: online
+  will_message:
+    topic: $prefix/status
+    payload: offline
+
+# Enable logging
+
+logger:
+  #level: ERROR
+# Enable Home Assistant API
+
+#api:
+#  encryption:
+#    key: "+/PAgnM+UzL9Qh8PvEkGtZGke40eFj1CY0aBUwkHAZQ="
+
+# Enable Home Assistant API
+
+ota:
+  password: "d80efa84c093b42f4cc9da6d975f4959"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  manual_ip:
+    static_ip: $ip
+    gateway: 10.0.0.1
+    subnet: 255.255.0.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "$prefix Fallback Hotspot"
+    password: "7FuOK3xmMXYj"
+
+captive_portal:
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor"
+    update_interval: 60s   
+
+switch:
+  - platform: gpio
+    pin:
+      number: 5
+      inverted: true
+    name: "$R1"
+    id: r1
+    icon: "mdi:toggle-switch"  
+  - platform: gpio
+    pin:
+      number: 4
+      inverted: true
+    name: "$R2"
+    id: r2
+    icon: "mdi:toggle-switch"
+  - platform: gpio
+    pin:
+      number: 0
+      inverted: true
+    name: "$R3"
+    id: r3
+    icon: "mdi:toggle-switch"
+  - platform: gpio
+    pin:
+      number: 2
+      inverted: true
+    name: "$R4"
+    id: r4
+    icon: "mdi:toggle-switch"
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "$S1"
+    on_press:
+      then:
+       - switch.turn_on: r1
+    on_release:
+      then:
+        - switch.turn_off: r1
+
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "$S2"
+    on_press:
+      then:
+       - switch.turn_on: r2
+    on_release:
+      then:
+        - switch.turn_off: r2
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "$S3"
+    on_press:
+      then:
+       - switch.turn_on: r3
+    on_release:
+      then:
+        - switch.turn_off: r3
+  - platform: gpio
+    pin:
+      number: GPIO15
+      mode: INPUT_PULLUP
+      #inverted: True
+    name: "$S4"
+    on_press:
+      then:
+       - switch.turn_on: r4
+    on_release:
+      then:
+        - switch.turn_off: r4
+
